@@ -1,0 +1,6 @@
+export { AuthService } from './auth.service'
+export { ProyectosService } from './proyectos.service'
+export { ChatService } from './chat.service'
+export { VersionesService } from './versiones.service'
+export { ExportService } from './export.service'
+export { IAService } from './ia.service'
