@@ -1,5 +1,6 @@
 import { SupabaseClient } from '@supabase/supabase-js'
 import { UsuariosRepository } from '@/lib/repositories'
+import { createAdminClient } from '@/lib/supabase/admin'
 import { Usuario } from '@/lib/types/database.types'
 
 export class AuthService {
@@ -14,7 +15,8 @@ export class AuthService {
     if (error) throw error
     if (!data.user) throw new Error('No se pudo crear el usuario')
 
-    return this.usuariosRepo.create({ id: data.user.id, nombre })
+    const profileDb = process.env.SUPABASE_SERVICE_ROLE_KEY ? createAdminClient() : this.db
+    return new UsuariosRepository(profileDb).upsert({ id: data.user.id, nombre })
   }
 
   async login(email: string, password: string) {

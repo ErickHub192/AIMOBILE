@@ -1,65 +1,63 @@
-import Image from "next/image";
+import Link from 'next/link'
+import { BarraSuperior } from './componentes/BarraSuperior'
+
+const pasos = [
+  'Describe tu aplicación móvil en lenguaje natural.',
+  'El backend procesa el mensaje usando los routers, servicios y la IA.',
+  'Supabase guarda proyectos, conversación, mensajes, versiones y pantallas.',
+  'El frontend solo muestra la información recibida desde la API.',
+]
 
 export default function Home() {
   return (
-    <div className="flex flex-col flex-1 items-center justify-center bg-zinc-50 font-sans dark:bg-black">
-      <main className="flex flex-1 w-full max-w-3xl flex-col items-center justify-between py-32 px-16 bg-white dark:bg-black sm:items-start">
-        <Image
-          className="dark:invert"
-          src="/next.svg"
-          alt="Next.js logo"
-          width={100}
-          height={20}
-          priority
-        />
-        <div className="flex flex-col items-center gap-6 text-center sm:items-start sm:text-left">
-          <h1 className="max-w-xs text-3xl font-semibold leading-10 tracking-tight text-black dark:text-zinc-50">
-            To get started, edit the page.tsx file.
+    <main className="min-h-screen">
+      <BarraSuperior />
+      <section className="mx-auto grid w-full max-w-7xl gap-8 px-5 py-10 lg:grid-cols-[1.05fr_0.95fr] lg:items-center lg:py-20">
+        <div>
+          <div className="mb-6 inline-flex rounded-full border border-cyan-400/25 bg-cyan-400/10 px-4 py-2 text-sm font-bold text-cyan-200">
+            MVP conectado al backend del proyecto
+          </div>
+          <h1 className="max-w-4xl text-5xl font-black leading-tight tracking-tight md:text-7xl">
+            Crea apps móviles desde un chat con <span className="text-cyan-300">Snitch</span>.
           </h1>
-          <p className="max-w-md text-lg leading-8 text-zinc-600 dark:text-zinc-400">
-            Looking for a starting point or more instructions? Head over to{" "}
-            <a
-              href="https://vercel.com/templates?framework=next.js&utm_source=create-next-app&utm_medium=appdir-template-tw&utm_campaign=create-next-app"
-              className="font-medium text-zinc-950 dark:text-zinc-50"
-            >
-              Templates
-            </a>{" "}
-            or the{" "}
-            <a
-              href="https://nextjs.org/learn?utm_source=create-next-app&utm_medium=appdir-template-tw&utm_campaign=create-next-app"
-              className="font-medium text-zinc-950 dark:text-zinc-50"
-            >
-              Learning
-            </a>{" "}
-            center.
+          <p className="mt-6 max-w-2xl text-lg leading-8 text-slate-300">
+            Esta interfaz consume los endpoints del backend y no genera por su cuenta. La lógica de proyectos,
+            conversación, versiones, pantallas y exportaciones se ejecuta mediante los routers y servicios del repositorio.
           </p>
+          <div className="mt-8 flex flex-col gap-3 sm:flex-row">
+            <Link href="/registro" className="boton-principal px-7 py-4 text-center">
+              Empezar proyecto
+            </Link>
+            <Link href="/login" className="boton-secundario px-7 py-4 text-center">
+              Ya tengo cuenta
+            </Link>
+          </div>
         </div>
-        <div className="flex flex-col gap-4 text-base font-medium sm:flex-row">
-          <a
-            className="flex h-12 w-full items-center justify-center gap-2 rounded-full bg-foreground px-5 text-background transition-colors hover:bg-[#383838] dark:hover:bg-[#ccc] md:w-[158px]"
-            href="https://vercel.com/new?utm_source=create-next-app&utm_medium=appdir-template-tw&utm_campaign=create-next-app"
-            target="_blank"
-            rel="noopener noreferrer"
-          >
-            <Image
-              className="dark:invert"
-              src="/vercel.svg"
-              alt="Vercel logomark"
-              width={16}
-              height={16}
-            />
-            Deploy Now
-          </a>
-          <a
-            className="flex h-12 w-full items-center justify-center rounded-full border border-solid border-black/[.08] px-5 transition-colors hover:border-transparent hover:bg-black/[.04] dark:border-white/[.145] dark:hover:bg-[#1a1a1a] md:w-[158px]"
-            href="https://nextjs.org/docs?utm_source=create-next-app&utm_medium=appdir-template-tw&utm_campaign=create-next-app"
-            target="_blank"
-            rel="noopener noreferrer"
-          >
-            Documentation
-          </a>
+
+        <div className="panel rounded-[2rem] p-5">
+          <div className="rounded-[1.6rem] border border-white/10 bg-slate-950/75 p-5">
+            <div className="mb-5 flex items-center justify-between">
+              <div>
+                <p className="text-sm font-bold text-cyan-300">Flujo real</p>
+                <h2 className="text-2xl font-black">Frontend → API → Router → Servicio → Supabase</h2>
+              </div>
+              <span className="rounded-full bg-emerald-400/10 px-3 py-1 text-xs font-bold text-emerald-300">
+                Activo
+              </span>
+            </div>
+            <div className="space-y-3">
+              {pasos.map((paso, index) => (
+                <div key={paso} className="flex gap-3 rounded-2xl bg-white/[0.04] p-4">
+                  <span className="grid h-8 w-8 shrink-0 place-items-center rounded-xl bg-cyan-400 font-black text-slate-950">
+                    {index + 1}
+                  </span>
+                  <p className="text-sm leading-6 text-slate-300">{paso}</p>
+                </div>
+              ))}
+            </div>
+          </div>
         </div>
-      </main>
-    </div>
-  );
+      </section>
+    </main>
+  )
 }

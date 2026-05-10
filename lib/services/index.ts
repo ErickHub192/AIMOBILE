@@ -4,3 +4,5 @@ export { ChatService } from './chat.service'
 export { VersionesService } from './versiones.service'
 export { ExportService } from './export.service'
 export { IAService } from './ia.service'
+
+export type { ExportTipo } from './export.service'

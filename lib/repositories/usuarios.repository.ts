@@ -9,6 +9,17 @@ export class UsuariosRepository {
       .from('usuarios')
       .select('*')
       .eq('id', id)
+      .maybeSingle()
+    if (error) throw error
+    return data
+  }
+
+
+  async upsert(payload: Pick<Usuario, 'id' | 'nombre'>): Promise<Usuario> {
+    const { data, error } = await this.db
+      .from('usuarios')
+      .upsert(payload, { onConflict: 'id' })
+      .select()
       .single()
     if (error) throw error
     return data

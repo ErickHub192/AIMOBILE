@@ -19,4 +19,8 @@ export class ExportRouter {
   async marcarDescargado(apk_id: string) {
     return this.exportService.marcarDescargado(apk_id)
   }
+
+  async prepararDescarga(proyecto_id: string, apk_id: string) {
+    return this.exportService.prepararDescarga(proyecto_id, apk_id)
+  }
 }

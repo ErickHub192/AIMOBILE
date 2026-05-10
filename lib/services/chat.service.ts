@@ -107,6 +107,7 @@ export class ChatService {
           nombre_pantalla: nombre,
           tipo_pantalla: 'generada',
           orden_visual: i + 1,
+          descripcion_funcional: `Pantalla ${nombre} generada por el backend para esta versión.`,
         }))
       )
     }
