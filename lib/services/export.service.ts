@@ -28,18 +28,38 @@ export class ExportService {
 
     const codigo = version.ruta_codigo_fuente
     const appName = `snitch-app-${version.numero_version}`
+    const esHTML = codigo.trimStart().startsWith('<!DOCTYPE') || codigo.trimStart().startsWith('<html')
 
-    return this.generarZipExpo(codigo, appName)
+    return esHTML
+      ? this.generarZipHTML(codigo, appName)
+      : this.generarZipExpo(codigo, appName)
+  }
+
+  private async generarZipHTML(codigo: string, appName: string): Promise<Buffer> {
+    const zip = new JSZip()
+    const folder = zip.folder(appName)!
+
+    folder.file('index.html', codigo)
+    folder.file('README.md', `# ${appName}
+
+App móvil generada por snitch.
+
+## Cómo abrir
+
+Abre el archivo \`index.html\` directamente en tu navegador.
+No requiere servidor ni dependencias.
+`)
+
+    const buffer = await zip.generateAsync({ type: 'nodebuffer', compression: 'DEFLATE' })
+    return buffer
   }
 
   private async generarZipExpo(codigo: string, appName: string): Promise<Buffer> {
     const zip = new JSZip()
     const folder = zip.folder(appName)!
 
-    // ── App.js — el código generado por la IA ──────────────────────────
     folder.file('App.js', codigo)
 
-    // ── package.json ───────────────────────────────────────────────────
     folder.file('package.json', JSON.stringify({
       name: appName.toLowerCase().replace(/[^a-z0-9-]/g, '-'),
       version: '1.0.0',
@@ -63,7 +83,6 @@ export class ExportService {
       private: true,
     }, null, 2))
 
-    // ── app.json ───────────────────────────────────────────────────────
     folder.file('app.json', JSON.stringify({
       expo: {
         name: appName,
@@ -75,59 +94,26 @@ export class ExportService {
       },
     }, null, 2))
 
-    // ── babel.config.js ────────────────────────────────────────────────
     folder.file('babel.config.js', `module.exports = function(api) {
   api.cache(true);
-  return {
-    presets: ['babel-preset-expo'],
-  };
+  return { presets: ['babel-preset-expo'] };
 };
 `)
 
-    // ── .gitignore ─────────────────────────────────────────────────────
-    folder.file('.gitignore', `node_modules/
-.expo/
-dist/
-*.jks
-*.p8
-*.p12
-*.key
-*.mobileprovision
-*.orig.*
-web-build/
-`)
+    folder.file('.gitignore', `node_modules/\n.expo/\ndist/\nweb-build/\n`)
 
-    // ── README.md — instrucciones de uso ───────────────────────────────
     folder.file('README.md', `# ${appName}
 
 Proyecto React Native (Expo) generado por snitch.
 
-## Requisitos
-
-- Node.js 18 o superior
-- npm o yarn
-- Expo Go instalado en tu dispositivo (iOS / Android)
-
 ## Pasos para correr
 
 \`\`\`bash
-# 1. Instalar dependencias
 npm install
-
-# 2. Iniciar el servidor de desarrollo
 npm start
 \`\`\`
 
-Escanea el QR con la app Expo Go en tu teléfono.
-
-## Comandos disponibles
-
-| Comando           | Acción                  |
-|-------------------|-------------------------|
-| \`npm start\`     | Inicia Expo             |
-| \`npm run android\` | Abre en Android       |
-| \`npm run ios\`   | Abre en iOS (Mac only)  |
-| \`npm run web\`   | Abre en navegador       |
+Escanea el QR con Expo Go en tu teléfono.
 `)
 
     const buffer = await zip.generateAsync({ type: 'nodebuffer', compression: 'DEFLATE' })

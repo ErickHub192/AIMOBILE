@@ -7,7 +7,7 @@ import {
   VersionesRepository,
   PantallasRepository,
 } from '@/lib/repositories'
-import { IAService } from './ia.service'
+import { IAService, PantallaIA } from './ia.service'
 import { Mensaje } from '@/lib/types/database.types'
 
 export class ChatService {
@@ -82,7 +82,7 @@ export class ChatService {
     return this.mensajesRepo.findByConversacion(conversacion.id)
   }
 
-  private async guardarVersion(proyecto_id: string, codigo: string, pantallas: string[]): Promise<void> {
+  private async guardarVersion(proyecto_id: string, codigo: string, pantallas: PantallaIA[]): Promise<void> {
     const versiones = await this.versionesRepo.findByProyecto(proyecto_id)
     const numero_version = `v${versiones.length + 1}.0`
 
@@ -102,9 +102,10 @@ export class ChatService {
 
     if (pantallas.length) {
       await this.pantallasRepo.createMany(
-        pantallas.map((nombre, i) => ({
+        pantallas.map((p, i) => ({
           version_id: version.id,
-          nombre_pantalla: nombre,
+          nombre_pantalla: p.nombre,
+          descripcion_funcional: p.descripcion,
           tipo_pantalla: 'generada',
           orden_visual: i + 1,
         }))

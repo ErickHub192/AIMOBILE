@@ -11,15 +11,17 @@ interface VersionDetalle extends VersionAplicacion {
 
 /* ──────────────── Preview Panel ──────────────── */
 function PhoneFrame({ version, loading, projectName: pjName }: { version: VersionDetalle | null; loading: boolean; projectName: string }) {
-  const [tab, setTab] = useState<'pantallas'|'codigo'|'preview'>('codigo')
+  const [tab, setTab] = useState<'preview'|'pantallas'>('preview')
 
   const noContent = !version
   const hasCode   = !!version?.ruta_codigo_fuente
   const hasUrl    = !!version?.preview?.url_preview
   const screens   = version?.pantallas ?? []
 
-  // Reset tab when version changes
-  useEffect(() => { setTab(version?.ruta_codigo_fuente ? 'codigo' : 'pantallas') }, [version?.id])
+  useEffect(() => { setTab('preview') }, [version?.id])
+
+  // Genera srcdoc del iframe desde el HTML guardado en ruta_codigo_fuente
+  const iframeSrc = hasCode ? version!.ruta_codigo_fuente! : null
 
   return (
     <div style={{ display:'flex', flexDirection:'column', alignItems:'center', padding:'24px 16px', height:'100%', overflowY:'auto' }}>
@@ -30,9 +32,8 @@ function PhoneFrame({ version, loading, projectName: pjName }: { version: Versio
 
       {version && (
         <div className="preview-tabs" style={{ width:260, marginBottom:16 }}>
+          {hasCode && <button className={`preview-tab${tab==='preview'?' active':''}`} onClick={() => setTab('preview')}>Preview</button>}
           <button className={`preview-tab${tab==='pantallas'?' active':''}`} onClick={() => setTab('pantallas')}>Pantallas</button>
-          {hasCode && <button className={`preview-tab${tab==='codigo'?' active':''}`} onClick={() => setTab('codigo')}>Código</button>}
-          {hasUrl  && <button className={`preview-tab${tab==='preview'?' active':''}`} onClick={() => setTab('preview')}>Preview</button>}
         </div>
       )}
 
@@ -46,10 +47,15 @@ function PhoneFrame({ version, loading, projectName: pjName }: { version: Versio
             <PhoneLoading />
           ) : noContent ? (
             <PhoneEmpty />
+          ) : tab === 'preview' && iframeSrc ? (
+            <iframe
+              srcDoc={iframeSrc}
+              style={{ width:'100%', height:'100%', border:'none', borderRadius:0 }}
+              title="Vista previa"
+              sandbox="allow-scripts"
+            />
           ) : tab === 'preview' && hasUrl ? (
             <iframe src={version!.preview!.url_preview!} style={{ width:'100%',height:'100%',border:'none' }} title="Vista previa" />
-          ) : tab === 'codigo' && hasCode ? (
-            <CodeViewer code={version!.ruta_codigo_fuente!} />
           ) : (
             <PhoneScreenList screens={screens} projectName={pjName} />
           )}

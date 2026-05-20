@@ -10,7 +10,7 @@ export async function POST(req: NextRequest) {
     const { db } = await requireUser()
     const buffer = await new ExportService(db).exportar(version_id, tipo ?? 'assets')
 
-    return new Response(buffer, {
+    return new Response(buffer as unknown as BodyInit, {
       headers: {
         'Content-Type': 'application/zip',
         'Content-Disposition': `attachment; filename="snitch-app-${version_id}.zip"`,
