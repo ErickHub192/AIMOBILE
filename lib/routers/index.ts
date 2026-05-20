@@ -1,6 +1,0 @@
-export { AuthRouter } from './auth.router'
-export { ProyectosRouter } from './proyectos.router'
-export { ChatRouter } from './chat.router'
-export { VersionesRouter } from './versiones.router'
-export { ExportRouter } from './export.router'
-export { IARouter } from './ia.router'
